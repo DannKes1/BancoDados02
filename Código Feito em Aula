@@ -1,0 +1,38 @@
+create table aluno (
+id_alu int primary key auto_increment,
+nome_alu varchar (80) not null,
+email_alu varchar (50) not null,
+telefone_alu varchar (80) not null,
+dataNascimento_alu date not null,
+ativo_alu boolean default true
+);
+
+-- para adicionar a coluna "CPF" VARCHAR (30) depois da coluna email_alu
+alter table aluno add cpf varchar (30) after email_alu;
+
+-- para alterar apenas o nome do atributo na tabela:  
+alter table aluno change dataNascimento_alu data_nascimento_alu date;
+  
+-- para alterar apenas o tipo de dados do atributo na tabela:
+alter table aluno change data_nascimento_alu dataNascimento_alu varchar (30);
+  
+-- renomear tabela 
+rename table aluno to alunos;
+
+show columns from aluno;
+
+-- criando outra tabela
+create table departamento (
+id_departamento INT PRIMARY KEY auto_increment,
+nome_dep VARCHAR(50)
+);
+
+create table funcionario (
+id_funcionario INT PRIMARY KEY AUTO_INCREMENT,
+nome_fun VARCHAR (50),
+id_departamento_fk int,
+foreign key (id_dapartamento_fk) references departamento (id_departamento)
+);
+show columns from funcionario;
+
+
