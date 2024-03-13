@@ -1,0 +1,150 @@
+create database SiteDeQuestoes;
+use SiteDeQuestoes;
+-- drop database SiteDeQuestoes;
+
+-- criando a tabela usuario
+create table Usuario(
+Id_Usuario int primary key auto_increment,
+Nome_Usuario varchar (80) not null,
+Data_Cadastro date not null,
+Email_Usuario varchar (80) unique
+);
+
+-- criando a tabela professor
+Create table Professor(
+Id_Professor INT PRIMARY KEY AUTO_INCREMENT,
+Nome_Prof VARCHAR (100) NOT NULL,
+Telefone_Prof VARCHAR(40) NOT NULL,
+Email_Prof VARCHAR (80) NOT NULL UNIQUE
+);
+
+-- criando a tabela banca 
+Create table Banca(
+Id_Banca INT PRIMARY KEY AUTO_INCREMENT,
+Nome_ban VARCHAR (80) NOT NULL,
+Sigla_ban VARCHAR (80) NOT NULL
+);
+
+-- criando a tabela Disciplina
+Create table Disciplina(
+Id_Disciplina INT PRIMARY KEY AUTO_INCREMENT,
+Nome_Dis VARCHAR (80) NOT NULL 
+);
+
+-- criando a tabela Assunto
+Create table Assunto(
+Id_Assunto INT PRIMARY KEY AUTO_INCREMENT,
+Texto_Ass VARCHAR (100),
+FK_Disciplina INT,
+FOREIGN KEY (FK_Disciplina) REFERENCES Disciplina (Id_Disciplina)
+);
+
+-- criando a tabela Questao
+Create table Questao(
+Id_Questao INT PRIMARY KEY AUTO_INCREMENT,
+Modalide VARCHAR (100) NOT NULL,
+Nivel VARCHAR (50) NOT NULL,
+Enunciado VARCHAR (100) NOT NULL,
+FK_Banca INT,
+FOREIGN KEY (FK_Banca) REFERENCES Banca (Id_Banca),
+FK_Assunto INT,
+FOREIGN KEY (FK_Assunto) REFERENCES Assunto (Id_Assunto)
+);
+
+-- criando a tabela Alternativas 
+Create table Alternativas (
+Id_Alternativa INT PRIMARY KEY AUTO_INCREMENT,
+Gabarito_Alter VARCHAR (100) NOT NULL,
+Texto_Alter VARCHAR (100) NOT NULL,
+FK_Questao INT,
+FOREIGN KEY (FK_Questao) REFERENCES Questao (Id_Questao)
+);
+
+-- criando a tabela comenta
+Create table Comenta(
+Id_Comenta INT PRIMARY KEY AUTO_INCREMENT,
+Texto_Com VARCHAR (100),
+Data_Com DATE,
+FK_Questao_Id_Banca INT,
+FOREIGN KEY (FK_Questao_Id_Banca) REFERENCES Banca (Id_Banca),
+FK_Professor INT,
+FOREIGN KEY (FK_Professor) REFERENCES Professor (Id_Professor)
+);
+
+-- criando a tabela Responde
+Create TABLE Responde(
+Id_Responde INT PRIMARY KEY AUTO_INCREMENT,
+Data_Res DATE NOT NULL,
+FK_Resultado INT,
+FOREIGN KEY (FK_Resultado) REFERENCES Usuario (Id_Usuario),
+FK_Resposta_Usu INT,
+FOREIGN KEY (FK_Resposta_Usu) REFERENCES Questao (Id_Questao)
+);
+
+-- mostrando a tabela professor
+select * from  professor;
+-- mostrando a tabela professor na com condição, no caso abaixo vai buscar da tabela professor onde o id do professor seja igual a 1,2 e 3
+select * from professor where id_professor in(1, 2, 3);
+
+-- update serve para alterações, no caso abaixo na tabela professor na coluna email eu quer um novo email, e irei alterar a linha 3 que é o id
+update Professor Set Email_Prof = "jefferson.santos@ifro.edu.br"
+where Id_Professor = 3; 
+
+select*from usuario;
+-- buscando usuario onde eu quero ver o nome, email e data. SOMENTE os usuarios que tenha o email iguaol a vitorreis@gmail.com 
+select nome_usuario, email_usuario, data_cadastro from usuario where email_usuario = "vitorreis@gmail.com";
+
+-- deletando da tabela disciplina a linha 3 
+delete from Disciplina where Id_Disciplina = 1;
+
+-- abaixo eu quero ver o nome, email e data da tabela usuario ONDE o email deve começar com vitor
+select nome_usuario, email_usuario, data_cadastro from usuario where email_usuario like "vitor%";
+-- abaixo eu quero ver o nome, email e data da tabela usuario ONDE a segunda letra do email deve ter a letra A
+select nome_usuario, email_usuario, data_cadastro from usuario where email_usuario like "_a%";
+
+Alter table Usuario add column Data_Nascimento date;
+
+
+
+insert into usuario (nome_usuario, data_cadastro, email_usuario, data_nascimento)
+values ("Vinicius de Oliveira Silva", "2024-03-12", "pinheiro.v@estudante.ifro.edu.br", "1994-10-01"),
+("Guilherme Maciel de Assunção", "2024-03-12", "guilherme2008assuncao@gmail.com", "2004-10-02"),
+("Lucas Samelar", "2024-03-12", "lucasemeler@gmail.com", "2003-11-07"),
+("Vitor Hugo", "2024-03-12", "vitorhugoquinelato@gmail.com", "2003-09-25"),
+("Victor Daniel", "2024-03-12", "Victor.34241361@gmail.com", "2004-04-19"),
+("Alicy Rodrigues", "2024-03-12", "alicyrc@hotmail.com", "2004-03-30"),
+("Sunamita Santos", "2024-03-12", "mymytasu@outlook.com", "2000-11-05"),
+("Ana Beatriz", "2024-03-12", "anabeatrizts.12@gmail.com", "2003-12-12"),
+("Lucayan Felipe", "2024-03-12", "lucayanfelips@hotmail.com", "2000-02-18"),
+("Patrick Macedo Felicio", "2024-03-12", "patrickmacedofeliceo@gmail.com", "2004-09-30"),
+("Renan da Rocha", "2024-03-12", "renanro919@gmail.com", "2004-04-28"),
+("Eloizy Campi", "2004-09-09", "campieloizy80@gmail.com", "2004-09-09"),
+("Gabriel de Oliveira Silva", "2024-03-12", "gabrieloliveira@gmail.com"),
+("Theo Theodoro Novais", "2024-03-12", "theonovais@gmail.com"),
+("Vitor dos Reis Eugenio", "2024-03-12", "vitorreis@gmail.com"),
+("Filipi Maciel Lopes", "2024-03-12","filipimaciel@gmail.com"),
+("Daniel Cristian Amorim Rocha", "2024-03-12", "danielcristian0706@gmail.com");
+
+
+
+
+insert into Professor (Nome_Prof, Telefone_Prof, Email_Prof)
+values ("Elias de Abreu Domingos da Silva", "69-99261-8723", "eliasabreu@ifro.edu.br"),
+("Clayton Ferraz Andrade", "69-99214-2020", "clayton@ifro.edu.br"),
+("Jefferson Antonio dos Santos", "69-99221-1010", "jefferson@ifro.edu.br"),
+("Reinaldo Lima Pereira", "69-99320-1111", "reinaldoking@ifro.edu.br"),
+("Hailton Cesar Alves dos Reis","69-98155-1231", "hailton@ifro.edu.br");
+
+insert into Disciplina(Nome_Dis)
+values ("Banco de Dados II"), 
+("Programação Orientada a Objetos");
+
+insert into Assunto(Texto_Ass, FK_Disciplina)
+Values("Metodos", 2),
+("Conceitos", 2),
+("Classe", 2), 
+("Metodo Construtor", 2),
+("Encapsulamento", 2),
+("Chaves estrangeiras", 1),
+("Comando DDL", 1),
+("Comando DML", 1);
