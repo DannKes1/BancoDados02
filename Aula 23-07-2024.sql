@@ -1,6 +1,6 @@
 create database SistemaFinanceiro;
 Use SistemaFinanceiro;
--- drop database SistemaFinanceiro;
+ -- drop database SistemaFinanceiro;
 
 create table Servicos(
 Id_Servicos int primary key auto_increment,
@@ -57,7 +57,7 @@ Status_Caixa varchar (100),
 FK_Funcionario int,
 foreign key (FK_Funcionario) references Funcionario (Id_Funcionario)
 );
-
+alter table Caixa add column Saldo_Final double;
 
 create table Recebimento(
 Id_Recebimento int primary key auto_increment,
@@ -106,6 +106,7 @@ insert into Servicos (Valor, Descricao, Tempo) values ("200", "manutencao rotead
 insert into Servicos (Valor, Descricao, Tempo) values ("150", "manutencao CPU", "10:30");
 insert into Servicos (Valor, Descricao, Tempo) values ("300", "troca memoria ram", "16:30");
 insert into Servicos (Valor, Descricao, Tempo) values ("450", "manutencao placa mae", "15:30");
+insert into Servicos (Valor, Descricao, Tempo) values ("120", "limpeza", "00:00:30");
 
 
 
@@ -131,6 +132,8 @@ insert into Funcionario (Nome_Funcionario, CPF_Funcionario) values ("Joazinho do
 insert into Cliente (Nome_Cliente, CPF_Cliente, Email_Cliente, Telefone_Cliente, Data_Nascimento_Cliente) values ("Jose","042.313.313-43", "Jose@gmail.com","69 99326 - 4777", "2004-07-20");
 insert into Cliente (Nome_Cliente, CPF_Cliente, Email_Cliente, Telefone_Cliente, Data_Nascimento_Cliente) values ("Dieguin Lacoeste","111.333.222.54", "dieguin@gmail.com","69 11111 - 2222", "2004-02-11");
 insert into Cliente (Nome_Cliente, CPF_Cliente, Email_Cliente, Telefone_Cliente, Data_Nascimento_Cliente) values ("Pedro Jacaré","333.222.111.-05", "pedro@gmail.com","69 99991 - 7776", "2001-03-11");
+insert into Cliente (Nome_Cliente, CPF_Cliente, Email_Cliente, Telefone_Cliente, Data_Nascimento_Cliente) values ("Diego Crocodilo","333.785.222.-05", "diego@gmail.com","69 11111 - 7776", "2001-03-20");
+insert into Cliente (Nome_Cliente, CPF_Cliente, Email_Cliente, Telefone_Cliente, Data_Nascimento_Cliente) values ("Juca Flux","333.555.654.-05", "jucaflux@gmail.com","69 15314 - 7776", "2004-05-21");
 
 
 insert into Venda (Data_Venda, Hora_Venda, Valor_Total, Desconto, Valor_Final, Tipo_Venda) values ("2023-02-24", "10:30", "300", "0","300", "debito");
@@ -153,8 +156,52 @@ insert into despesa (Valor, Data_Vencimento, Data_Pagamento, Status_Despesa, FK_
 insert into dispositivo (Aliquota, Descricao_Dispositivo, Status_Dispositivo) values ("0", "que?","inativo");
 
 insert into encargo (Valor, Descricao, FK_Dispositivo, FK_Recebimento) values ("300", "NAO SEI", 1, 1);
+select * from venda_servicos;
+
 insert into Venda_Servicos (FK_Servicos, FK_Venda) values (1, 1); 
+insert into Venda_Servicos (FK_Servicos, FK_Venda) values (1, 1); 
+select * from venda_servicos;
+insert into Venda_Servicos (FK_Servicos, FK_Venda,Valor_Unitario, Quantidade) values (2, 2, 300, 1); 
+insert into Venda_Servicos (FK_Servicos, FK_Venda,Valor_Unitario, Quantidade) values (3, 1, 250, 2); 
+insert into Venda_Servicos (FK_Servicos, FK_Venda,Valor_Unitario, Quantidade) values (3, 1, 250, 2);
 
 
-select * from venda inner join cliente on cliente.Id_Cliente = venda.FK_Cliente;
-select * from venda left join cliente on cliente.Id_Cliente = venda.FK_Cliente;
+
+select * from venda inner join cliente on cliente.Id_Cliente = venda.FK_Cliente; -- pega onde tem as duas informações
+select * from venda left join cliente on cliente.Id_Cliente = venda.FK_Cliente; -- pega as informacoes da tabela da esquerda "primeira tabela"
+
+select * from servicos order by valor desc;
+select max(valor) from servicos;
+select min(valor) from servicos;
+
+select * from servicos where valor >100 and tempo = '00:00:30';
+select * from servicos where descricao like "l%";
+
+select Nome_Cliente, Cpf_Cliente from cliente;
+
+select * from venda where fk_cliente is not null;
+-- inner join
+select * from venda inner join cliente on FK_Cliente = cliente.Id_Cliente where FK_Cliente is not null;
+-- left join 
+select * from venda left join cliente on FK_Cliente = cliente.Id_Cliente;
+-- right join
+select * from venda right join cliente on FK_Cliente = cliente.Id_Cliente;
+-- full join
+select * from venda full join cliente on FK_Cliente = cliente.Id_Cliente;
+-- union
+select Nome_Funcionario, CPF_Funcionario from funcionario
+union 
+Select Nome_Cliente, CPF_Cliente from cliente;
+
+
+ select max(valor) from servicos;
+-- duas formas de fazer
+select * from servicos where valor in (select max(valor) from servicos);
+select * from servicos where valor = (select max(valor) from servicos);
+
+
+-- todo seervico que tem o valor maior que a media do valor servico
+select * from servicos where valor > (select avg(valor) from servicos); 
+
+select * from recebimento inner join caixa on caixa.id_caixa = Recebimento.fk_caixa
+inner join funcionario on id_funcionario = caixa.fk_funcionario;
