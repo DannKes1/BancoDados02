@@ -2,6 +2,7 @@ create database SistemaFinanceiro;
 Use SistemaFinanceiro;
  -- drop database SistemaFinanceiro;
 
+
 create table Servicos(
 Id_Servicos int primary key auto_increment,
 Valor double not null,
@@ -19,6 +20,7 @@ Telefone_Cliente varchar (20) not null,
 Data_Nascimento_Cliente datetime not null
 );
 
+
 create table Venda (
 Id_Venda int primary key auto_increment, 
 Data_Venda datetime not null,
@@ -32,7 +34,6 @@ foreign key (FK_Cliente) references Cliente (Id_Cliente)
 );
 
 
-
 Create table Venda_Servicos(
 Id_VendaServicos int primary key auto_increment,
 FK_Servicos int not null,
@@ -41,6 +42,8 @@ FK_Venda int not null,
 foreign key (FK_Venda) references Venda (Id_Venda) on delete cascade 
 );
 
+
+-- vou ter que fazer um crude nessa tabela
 create table Funcionario (
 Id_Funcionario int primary key auto_increment,
 Nome_Funcionario Varchar (100) not null,
@@ -59,6 +62,7 @@ foreign key (FK_Funcionario) references Funcionario (Id_Funcionario)
 );
 alter table Caixa add column Saldo_Final double;
 
+
 create table Recebimento(
 Id_Recebimento int primary key auto_increment,
 Valor_Recebimento double ,
@@ -69,6 +73,27 @@ FK_Caixa int not null,
 foreign key (FK_Caixa) references Caixa (Id_Caixa)
 );
 
+
+
+create table Fornecedor(
+Id_Fornecedor int primary key auto_increment,
+Razao_Social varchar(100),
+Nome varchar(100),
+CNPJ varchar(100),
+Ativo varchar(15),
+Atividade_Economica varchar (100),
+Telefone varchar(25),
+Email varchar (100)
+);
+alter table fornecedor add column FK_Despesa int not null;
+
+insert into fornecedor (Razao_Social, Nome, CNPJ, Ativo, Atividade_Economica, Telefone, Email)
+values ("H.S Calçados", "Casa da Sogra", "444.444.0001-02","Sim","Empresa de Calcados", "66-99999-4444", "hscalcados@gmail.com");
+
+select *from fornecedor;
+
+
+
 create table Despesa (
 Id_Despesa int primary key auto_increment,
 Valor double not null,
@@ -78,6 +103,14 @@ Status_Despesa varchar (50) not null,
 FK_Caixa int not null,
 foreign key (FK_Caixa) references Caixa (Id_Caixa)
 );
+alter table despesa add column FK_Fornecedor int not null;
+
+update despesa
+set FK_Fornecedor = 1
+where id_despesa = "1";
+
+select * from despesa;
+
 
 create table Dispositivo (
 Id_Dispositivo int primary key auto_increment,
@@ -85,6 +118,7 @@ Aliquota double,
 Descricao_Dispositivo varchar (100) not null,
 Status_Dispositivo varchar (30) not null
 );
+
 
 -- fk recebimento fica nessa tabela
 create table Encargo(
@@ -96,6 +130,8 @@ foreign key (FK_Dispositivo) references Dispositivo (Id_Dispositivo),
 FK_Recebimento int not null,
 foreign key (FK_Recebimento) references Recebimento (Id_Recebimento) on delete cascade
 );
+
+
 
 
 
@@ -205,3 +241,45 @@ select * from servicos where valor > (select avg(valor) from servicos);
 
 select * from recebimento inner join caixa on caixa.id_caixa = Recebimento.fk_caixa
 inner join funcionario on id_funcionario = caixa.fk_funcionario;
+
+
+
+select * from servicos;
+
+update servicos
+set valor = "50"
+where id_servicos = 1; 
+
+select Id_vendaServicos, FK_Servicos, Descricao from Venda_Servicos inner join Servicos 
+on FK_Servicos = Servicos.Id_Servicos;
+
+-- id vendar, valor venda, nome cliente
+select * from venda;
+select * from cliente;
+
+select Id_venda, valor_final, nome_cliente  from venda left join cliente 
+on fk_cliente = cliente.Id_Cliente;
+
+-- todos os dados da despesa e fornecedor
+select * from despesa;
+select * from fornecedor;
+
+select * from despesa inner join fornecedor 
+on fk_fornecedor = fornecedor.id_fornecedor;
+
+
+-- todos os caixas com nome e cpf funcionario
+select * from caixa;
+select * from funcionario; 
+select id_Caixa, saldo_inicial, total_entradas, total_saidas, status_caixa, fk_funcionario, saldo_final, nome_funcionario, cpf_funcionario from caixa inner join funcionario
+on fk_funcionario = funcionario.id_funcionario;
+-- outra maneira de fazer o codigo de cima.
+select caixa.*, funcionario.nome_funcionario from caixa inner join funcionario
+on fk_funcionario = funcionario.id_funcionario;
+
+-- servicos e quantas vezes ele foi vendido na tabela venda_Servicos
+select * from venda_servicos;
+select * from servicos;
+select * from servicos where 
+(select  count(id_vendaservicos) from venda_servicos where fk_Servicos = id_Servicos ) > 1;
+
